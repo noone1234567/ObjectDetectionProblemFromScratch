@@ -17,6 +17,7 @@ bbox_params = A.BboxParams(format='albumentations', min_area=100, min_visibility
 
 no_transform = A.Compose([   
     A.augmentations.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), always_apply=True),
+    A.Resize(height=720, width=1080)
     A.pytorch.transforms.ToTensorV2()
 ], bbox_params=bbox_params,  p=1.0)
 
