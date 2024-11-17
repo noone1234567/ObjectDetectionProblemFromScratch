@@ -92,8 +92,11 @@ class VOCDetection(data.Dataset):
         
         source_box_s = np.clip( source_box_s / np.array([width-1, height-1, width-1, height-1]), 0, 1)
         #source_box_s = np.clip( source_box_s / np.array([1280-1, 720-1, 1280-1, 720-1]), 0, 1)
-        
-        result = light_transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
+
+        if self.transform is not None:
+            result = self.transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
+        else:
+            result = {'image':source_image, 'bboxes':source_box_s, 'labels':source_label_s}
         target_image   =          result['image' ]
         target_box_s   = np.array(result['bboxes'])
         target_label_s = np.array(result['labels'])
