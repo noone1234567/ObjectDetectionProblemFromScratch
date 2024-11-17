@@ -15,6 +15,11 @@ VOC_CLASSES = ('background','car')
 
 bbox_params = A.BboxParams(format='albumentations', min_area=100, min_visibility=0.5, label_fields=['labels'])
 
+no_transform = A.Compose([   
+    A.augmentations.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), always_apply=True),
+    A.pytorch.transforms.ToTensorV2()
+], bbox_params=bbox_params,  p=1.0)
+
 light_transform = A.Compose([   
     A.HorizontalFlip(p=0.5),
     A.RandomResizedCrop(height=360, width=640, p=0.5, scale=(0.7, 1.0)),
@@ -95,13 +100,14 @@ class VOCDetection(data.Dataset):
 
         if self.sample_transform is not None:
             result = self.sample_transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
-            target_image   =          result['image' ]
-            target_box_s   = np.array(result['bboxes'])
-            target_label_s = np.array(result['labels'])
         else:
-            target_image   = torch.from_numpy( np.transpose( (source_image.astype(np.float32)/255), axes=(2,0,1) ))
-            target_box_s   = source_box_s
-            target_label_s = source_label_s
+            result = no_transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
+        target_image   =          result['image' ]
+        target_box_s   = np.array(result['bboxes'])
+        target_label_s = np.array(result['labels'])
+        #target_image   = torch.from_numpy( np.transpose( (source_image.astype(np.float32)/255), axes=(2,0,1) ))
+        #target_box_s   = source_box_s    
+        #target_label_s = source_label_s
         
         return torch.tensor(target_image), torch.from_numpy(target_box_s), torch.from_numpy(target_label_s)
     
