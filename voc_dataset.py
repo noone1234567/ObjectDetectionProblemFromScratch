@@ -101,8 +101,6 @@ class VOCDetection(data.Dataset):
         if self.sample_transform is not None:
             result = self.sample_transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
         else:
-            print('smth')
-            print(image.shape)
             result = no_transform(image=source_image, bboxes=source_box_s, labels=source_label_s )
         target_image   =          result['image' ]
         target_box_s   = np.array(result['bboxes'])
